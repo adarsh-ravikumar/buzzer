@@ -92,7 +92,6 @@
       overflow: hidden;
       img {
         width: clamp(150px, 80vw, 500px);
-        opacity: 0.8;
       }
 
       width: 100%;
