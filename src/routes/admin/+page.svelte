@@ -49,13 +49,17 @@
         round_active &&
         !buzzed.includes(e.record.id)
       ) {
+        buzzers[e.record.id] = e.record;
+        
         let time_taken =
-          new Date(buzzers[e.record.id].updated).getTime() -
-          start_time.getTime();
+        new Date(buzzers[e.record.id].updated).getTime() -
+        start_time.getTime();
+        
+
         if (time_taken < 0) {
           return
         }
-        buzzers[e.record.id] = e.record;
+
 
         if (!first_buzzed) {
           first_buzzed = true;
