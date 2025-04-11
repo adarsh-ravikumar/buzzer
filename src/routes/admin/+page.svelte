@@ -43,26 +43,28 @@
         buzzers = buzzers;
       }
 
-      if (e.action === "update") {
+      if (
+        e.action === "update" &&
+        e.record.buzzed === true &&
+        round_active &&
+        !buzzed.includes(e.record.id)
+      ) {
+        let time_taken =
+          new Date(buzzers[e.record.id].updated).getTime() -
+          start_time.getTime();
+        if (time_taken < 0) {
+          return
+        }
         buzzers[e.record.id] = e.record;
 
-        if (e.record.buzzed === true && round_active) {
-          if (!first_buzzed) {
-            first_buzzed = true;
-            let buzzed = new Audio("/buzz.wav");
-            buzzed.play();
-          }
-          buzzers[e.record.id].buzzed_in =
-            new Date(buzzers[e.record.id].last_buzzed).getTime() -
-            start_time.getTime();
-          if (!buzzed.includes(e.record.id)) buzzed.push(e.record.id);
+        if (!first_buzzed) {
+          first_buzzed = true;
+          let buzzed = new Audio("/buzz.wav");
+          buzzed.play();
         }
+        buzzers[e.record.id].buzzed_in = time_taken;
 
-        buzzed.sort(
-          (a, b) =>
-            new Date(buzzers[a].last_buzzed).getTime() -
-            new Date(buzzers[b].last_buzzed).getTime()
-        );
+        buzzed.push(e.record.id);
       }
     });
 
@@ -95,20 +97,18 @@
       start_time = new Date();
     }
 
-    if (!round_active) {
-      buzzed = [];
-      first_buzzed = false;
+    buzzed = [];
+    first_buzzed = false;
 
-      for (let id of Object.keys(buzzers)) {
-        await $PB!.collection("buzzer").update(
-          id,
-          {
-            buzzed: false,
-            last_buzzed: null,
-          },
-          { requestKey: null }
-        );
-      }
+    for (let id of Object.keys(buzzers)) {
+      await $PB!.collection("buzzer").update(
+        id,
+        {
+          buzzed: false,
+          last_buzzed: null,
+        },
+        { requestKey: null }
+      );
     }
   }
 
