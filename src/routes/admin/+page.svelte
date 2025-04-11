@@ -71,27 +71,6 @@
         buzzed.push(e.record.id);
       }
     });
-
-    cleanup = setInterval(async () => {
-      const now = Date.now();
-      const threshold = 30000;
-
-      for (let id of Object.keys(buzzers)) {
-        let buzzer = buzzers[id];
-        const lastSeen = new Date(buzzer.last_seen).getTime();
-        if (now - lastSeen > threshold) {
-          await $PB!
-            .collection("buzzer")
-            .delete(buzzer.id, { requestKey: null });
-          console.log("Deleted stale buzzer:", buzzer.team_name);
-          delete buzzers[id];
-        }
-      }
-    }, 10000);
-
-    onbeforeunload = () => {
-      clearInterval(cleanup);
-    };
   });
 
   async function set_round(status: boolean) {
