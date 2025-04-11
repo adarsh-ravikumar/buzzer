@@ -97,6 +97,8 @@
 
   function delete_buzzer(buzzer: string): any {
     $PB!.collection("buzzer").delete(buzzer, { requestKey: null });
+    delete buzzers[buzzer]
+    buzzers = buzzers
   }
 </script>
 
